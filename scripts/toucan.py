@@ -9,7 +9,7 @@ TEMPLATE = """<!DOCTYPE html>
 <head>
   <meta charset='UTF-8'>
   <title>{title}</title>
-  <link rel='stylesheet' href='style.css'>
+  <link rel='stylesheet' href='{style}'>
 </head>
 <body>
 <article>
@@ -62,11 +62,15 @@ def build():
         out_path.parent.mkdir(parents=True, exist_ok=True)
         body = md_to_html(md_file.read_text())
         title = md_file.stem.replace('_', ' ').title()
-        out_path.write_text(TEMPLATE.format(title=title, body=body))
+        style = os.path.relpath(OUTPUT_DIR / "style.css", start=out_path.parent)
+        out_path.write_text(TEMPLATE.format(title=title, body=body, style=style))
         link = out_path.relative_to(OUTPUT_DIR)
         index_lines.append(f"<li><a href='{link}'>{title}</a></li>")
     index_lines.append("</ul>")
-    (OUTPUT_DIR / "index.html").write_text(TEMPLATE.format(title="LichenLoom", body="\n".join(index_lines)))
+    style_root = "style.css"
+    (OUTPUT_DIR / "index.html").write_text(
+        TEMPLATE.format(title="LichenLoom", body="\n".join(index_lines), style=style_root)
+    )
 
 if __name__ == "__main__":
     build()
