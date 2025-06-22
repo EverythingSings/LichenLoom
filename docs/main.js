@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('li.branch').forEach(li=>{const sub=li.querySelector('ul');const b=document.createElement('span');b.textContent='▸';b.className='toggle';li.prepend(b);b.addEventListener('click',e=>{e.stopPropagation();li.classList.toggle('open');sub.classList.toggle('hidden');});});});
