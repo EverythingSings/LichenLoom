@@ -1,6 +1,57 @@
 document.addEventListener('DOMContentLoaded',()=>{
-  const tree=document.getElementById('story-tree');
-  const nav=document.getElementById('nav');
+  const parts=window.location.pathname.replace(/(^\/|$)/g,'').split('/');
+  const prefix='../'.repeat(parts.length-1);
+
+    const homeLink=`${prefix}index.html`;
+
+  const svg=document.getElementById('nav');
+  if(svg){
+    const tree={name:'LichenLoom',link:'index.html',children:[
+      {name:'genesis',link:'genesis/index.html',children:[
+        {name:'seed',link:'genesis/seed/index.html'},
+        {name:'spore',link:'genesis/spore/index.html'}]},
+      {name:'odyssey',link:'odyssey/index.html',children:[
+        {name:'whispers',link:'odyssey/whispers/index.html'}]}
+    ]};
+
+    const size=600;
+    svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
+    const center={x:size/2,y:size/2};
+    const counts=[];
+    (function count(nodes,d=1){
+      counts[d]=(counts[d]||0)+nodes.length;
+      nodes.forEach(n=>n.children&&count(n.children,d+1));
+    })(tree.children);
+    const idx={};
+    function place(node,d,parent){
+      let pos=parent;
+      if(d){
+        const angle=((idx[d]||0)/counts[d])*2*Math.PI;
+        idx[d]=(idx[d]||0)+1;
+        const r=80*d;
+        pos={x:center.x+r*Math.cos(angle),y:center.y+r*Math.sin(angle)};
+        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',parent.x);
+        line.setAttribute('y1',parent.y);
+        line.setAttribute('x2',pos.x);
+        line.setAttribute('y2',pos.y);
+        svg.appendChild(line);
+      }
+      const link=document.createElementNS('http://www.w3.org/2000/svg','a');
+      link.setAttribute('href',prefix+node.link);
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',pos.x);
+      circle.setAttribute('cy',pos.y);
+      circle.setAttribute('r',d?5:6);
+      const title=document.createElementNS('http://www.w3.org/2000/svg','title');
+      title.textContent=node.name;
+      link.appendChild(circle);
+      link.appendChild(title);
+      svg.appendChild(link);
+      if(node.children) node.children.forEach(n=>place(n,d+1,pos));
+    }
+    place(tree,0,center);
+  }
   const canvas=document.getElementById('mycelial');
   let ctx,center;
   const counts=[];

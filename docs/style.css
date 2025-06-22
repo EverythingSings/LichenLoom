@@ -12,11 +12,11 @@ body{
   font-family:'Helvetica Neue',sans-serif;
   margin:2rem;
   line-height:1.6;
-  background:linear-gradient(var(--bg-light),#d0d0d0);
+  background:linear-gradient(to bottom, var(--bg-light),#d0d0d0);
   color:var(--text-light);
 }
 .dark body{
-  background:linear-gradient(var(--bg-dark),#333);
+  background:linear-gradient(to bottom, var(--bg-dark),#333);
   color:var(--text-dark);
 }
 article{max-width:65ch;margin:auto;text-align:center;}
@@ -30,3 +30,10 @@ a:hover{text-decoration:underline;}
 #breadcrumb{margin-bottom:1rem;font-size:.9rem;}
 #breadcrumb a{color:inherit;text-decoration:none;}
 #breadcrumb span+span::before{content:' / ';}
+#nav{display:block;width:600px;height:600px;margin:2rem auto;}
+#nav line{stroke:var(--head-light);}
+.dark #nav line{stroke:var(--head-dark);}
+#nav circle{fill:var(--head-light);}
+.dark #nav circle{fill:var(--head-dark);}
+#nav a:hover circle{fill:var(--link-light);}
+.dark #nav a:hover circle{fill:var(--link-dark);}
