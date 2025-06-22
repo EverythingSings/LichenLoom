@@ -29,3 +29,7 @@ Timestamps mark each thread's emergence, honoring nonlinear perspectives.
 4. Community + bots decide: merge, graft elsewhere, or quarantine as a *rogue rhizoid*.
 
 > *Refactor, don’t fossilise.* The loom lives only while threads keep moving.
+
+## 3 · GitHub Pages via Toucan
+Run `python scripts/toucan.py` to weave static pages into `docs/`.
+Enable GitHub Pages from that folder to browse the narrative in a minimalist theme.
