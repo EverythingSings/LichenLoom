@@ -67,13 +67,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   const bc=document.getElementById('breadcrumb');
   if(bc){
     const parts=window.location.pathname.replace(/(^\/|$)/g,'').split('/');
-    const spans=[];
-    spans.push(`<span><a href="${'../'.repeat(parts.length-1)}index.html">Home</a></span>`);
-    for(let i=0;i<parts.length;i++){
-      let label=parts[i].replace('.html','');
-      if(label==='index') continue;
-      spans.push(`<span>${label}</span>`);
+    const indices=parts.map((p,i)=>p==='index.html'?null:i).filter(i=>i!==null);
+    const last=indices[indices.length-1];
+    const crumbs=[];
+    const homeLink=`${'../'.repeat(parts.length-1)}index.html`;
+    crumbs.push(parts.length>1?`<span><a href="${homeLink}">Home</a></span>`:`<span>Home</span>`);
+    for(const i of indices){
+      const label=parts[i].replace('.html','');
+      const pre=`${'../'.repeat(parts.length-i-1)}${parts.slice(0,i+1).join('/')}`;
+      if(i===last){
+        crumbs.push(`<span>${label}</span>`);
+      }else{
+        crumbs.push(`<span><a href="${pre}/index.html">${label}</a></span>`);
+      }
     }
-    bc.innerHTML=spans.join('');
+    bc.innerHTML=crumbs.join('');
   }
 });
