@@ -7,9 +7,10 @@ Fractal fiction grown on-git
 ---
 
 ## 0 · Purpose
-Cultivate an **open-world narrative lab** where code and prose co-evolve.  
-Every branch is a thallus; every pull request, a fresh tendril.  
+Cultivate an **open-world narrative lab** where code and prose co-evolve.
+Every branch is a thallus; every pull request, a fresh tendril.
 The “canon” lives at `main`, always mutating.
+Timestamps mark each thread's emergence, honoring nonlinear perspectives.
 
 ## 1 · Core Ideas
 | Principle   | Implementation |
@@ -18,6 +19,7 @@ The “canon” lives at `main`, always mutating.
 | **Fractality** | Nested folders mirror hyphal branching: `root/scene/beat/…` |
 | **Autonomy**   | `/agents` houses GPT-based bots that propose edits and auto-merge low-risk PRs. |
 | **Perpetual Beta** | No finished work—only **sporulation events** (tagged releases) for readers. |
+| **Non-linearity** | Scenes bear timestamps and may contradict; growth thrives in imperfection. |
 
 ## 2 · How to Contribute
 1. **Fork → Branch** `hypha/<your-handle>/<seed>`  
