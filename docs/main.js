@@ -1,12 +1,15 @@
 document.addEventListener('DOMContentLoaded',()=>{
   const tree=document.getElementById('story-tree');
   const nav=document.getElementById('nav');
-  const canvas=document.getElementById('mycelial');
-  let ctx,center;
   const counts=[];
-  if(tree && nav && canvas){
-    ctx=canvas.getContext('2d');
-    center={x:canvas.width/2,y:canvas.height/2};
+  if(tree && nav){
+    const svgNS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width','600');
+    svg.setAttribute('height','600');
+    svg.id='constellation';
+    nav.appendChild(svg);
+    const center={x:300,y:300};
     function count(ul,d=0){
       counts[d]=(counts[d]||0)+ul.children.length;
       for(const li of ul.children){
@@ -24,32 +27,39 @@ document.addEventListener('DOMContentLoaded',()=>{
       const x=center.x+r*Math.cos(angle);
       const y=center.y+r*Math.sin(angle);
       const link=li.querySelector('a');
-      const node=document.createElement('a');
-      node.className='node';
-      if(link){
-        node.href=link.getAttribute('href');
-        node.dataset.label=link.textContent;
-      }else{
-        node.dataset.label=li.firstChild.textContent.trim();
-      }
-      nav.appendChild(node);
-      node.style.left=(x-4)+'px';
-      node.style.top=(y-4)+'px';
-      ctx.beginPath();
-      ctx.moveTo(parent.x,parent.y);
-      ctx.lineTo(x,y);
-      ctx.stroke();
+      const href=link?link.getAttribute('href'):null;
+      const label=link?link.textContent:li.firstChild.textContent.trim();
+      const line=document.createElementNS(svgNS,'line');
+      line.setAttribute('x1',parent.x);
+      line.setAttribute('y1',parent.y);
+      line.setAttribute('x2',x);
+      line.setAttribute('y2',y);
+      svg.appendChild(line);
+      const anchor=document.createElementNS(svgNS,'a');
+      if(href)anchor.setAttribute('href',href);
+      const circle=document.createElementNS(svgNS,'circle');
+      circle.setAttribute('cx',x);
+      circle.setAttribute('cy',y);
+      circle.setAttribute('r',4);
+      const title=document.createElementNS(svgNS,'title');
+      title.textContent=label;
+      circle.appendChild(title);
+      anchor.appendChild(circle);
+      svg.appendChild(anchor);
       const sub=li.querySelector(':scope>ul');
       if(sub)for(const child of sub.children)place(child,d+1,{x,y});
     }
-    ctx.strokeStyle='#ccc';
-    const rootNode=document.createElement('a');
-    rootNode.className='node';
-    rootNode.dataset.label='LichenLoom';
-    rootNode.href=`${'../'.repeat(window.location.pathname.replace(/(^\/|$)/g,'').split('/').length-1)}index.html`;
-    nav.appendChild(rootNode);
-    rootNode.style.left=(center.x-4)+'px';
-    rootNode.style.top=(center.y-4)+'px';
+    const rootAnchor=document.createElementNS(svgNS,'a');
+    rootAnchor.setAttribute('href',`${'../'.repeat(window.location.pathname.replace(/(^\/|$)/g,'').split('/').length-1)}index.html`);
+    const rootCircle=document.createElementNS(svgNS,'circle');
+    rootCircle.setAttribute('cx',center.x);
+    rootCircle.setAttribute('cy',center.y);
+    rootCircle.setAttribute('r',4);
+    const rootTitle=document.createElementNS(svgNS,'title');
+    rootTitle.textContent='LichenLoom';
+    rootCircle.appendChild(rootTitle);
+    rootAnchor.appendChild(rootCircle);
+    svg.appendChild(rootAnchor);
     for(const child of tree.children)place(child,1,center);
   }
 
