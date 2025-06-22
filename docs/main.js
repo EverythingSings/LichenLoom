@@ -1,71 +1,80 @@
-document.addEventListener('DOMContentLoaded',()=>{
+const NAV_TREE={name:'LichenLoom',link:'index.html',children:[
+  {name:'genesis',link:'genesis/index.html',children:[
+    {name:'seed',link:'genesis/seed/index.html'},
+    {name:'spore',link:'genesis/spore/index.html'}]},
+  {name:'odyssey',link:'odyssey/index.html',children:[
+    {name:'whispers',link:'odyssey/whispers/index.html'}]}
+]};
+
+function initDarkMode(){
+  if(localStorage.getItem('dark')!=='false'){
+    document.documentElement.classList.add('dark');
+  }
+      const on=document.documentElement.classList.toggle('dark');
+      localStorage.setItem('dark',on);
+}
+function buildBreadcrumb(){
+  const bc=document.getElementById('breadcrumb');
+  if(!bc) return;
+  const indices=parts.map((p,i)=>p==='index.html'?null:i).filter(i=>i!==null);
+  const last=indices[indices.length-1];
+  const crumbs=[];
+  const home=`${prefix}index.html`;
+  crumbs.push(parts.length>1?`<span><a href="${home}">Home</a></span>`:`<span>Home</span>`);
+  for(const i of indices){
+    const label=parts[i].replace('.html','');
+    const pre=`${'../'.repeat(parts.length-i-1)}${parts.slice(0,i+1).join('/')}`;
+    if(i===last){
+      crumbs.push(`<span>${label}</span>`);
+    }else{
+      crumbs.push(`<span><a href="${pre}/index.html">${label}</a></span>`);
+  bc.innerHTML=crumbs.join('');
+}
+function drawNav(){
+  if(!svg) return;
   const parts=window.location.pathname.replace(/(^\/|$)/g,'').split('/');
   const prefix='../'.repeat(parts.length-1);
-
-    const homeLink=`${prefix}index.html`;
-
-  const svg=document.getElementById('nav');
-  if(svg){
-    const tree={name:'LichenLoom',link:'index.html',children:[
-      {name:'genesis',link:'genesis/index.html',children:[
-        {name:'seed',link:'genesis/seed/index.html'},
-        {name:'spore',link:'genesis/spore/index.html'}]},
-      {name:'odyssey',link:'odyssey/index.html',children:[
-        {name:'whispers',link:'odyssey/whispers/index.html'}]}
-    ]};
-
-    const size=600;
-    svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
-    const center={x:size/2,y:size/2};
-    const counts=[];
-    (function count(nodes,d=1){
-      counts[d]=(counts[d]||0)+nodes.length;
-      nodes.forEach(n=>n.children&&count(n.children,d+1));
-    })(tree.children);
-    const idx={};
-    function place(node,d,parent){
-      let pos=parent;
-      if(d){
-        const angle=((idx[d]||0)/counts[d])*2*Math.PI;
-        idx[d]=(idx[d]||0)+1;
-        const r=80*d;
-        pos={x:center.x+r*Math.cos(angle),y:center.y+r*Math.sin(angle)};
-        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-        line.setAttribute('x1',parent.x);
-        line.setAttribute('y1',parent.y);
-        line.setAttribute('x2',pos.x);
-        line.setAttribute('y2',pos.y);
-        svg.appendChild(line);
-      }
-      const link=document.createElementNS('http://www.w3.org/2000/svg','a');
-      link.setAttribute('href',prefix+node.link);
-      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circle.setAttribute('cx',pos.x);
-      circle.setAttribute('cy',pos.y);
-      circle.setAttribute('r',d?5:6);
-      const title=document.createElementNS('http://www.w3.org/2000/svg','title');
-      title.textContent=node.name;
-      link.appendChild(circle);
-      link.appendChild(title);
-      svg.appendChild(link);
-      if(node.children) node.children.forEach(n=>place(n,d+1,pos));
-    }
-    place(tree,0,center);
-  }
-  const canvas=document.getElementById('mycelial');
-  let ctx,center;
+  const size=600;
+  svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
+  const center={x:size/2,y:size/2};
   const counts=[];
-  if(tree && nav && canvas){
-    ctx=canvas.getContext('2d');
-    center={x:canvas.width/2,y:canvas.height/2};
-    function count(ul,d=0){
-      counts[d]=(counts[d]||0)+ul.children.length;
-      for(const li of ul.children){
-        const sub=li.querySelector(':scope>ul');
-        if(sub)count(sub,d+1);
-      }
-    }
-    count(tree);
+  (function count(nodes,d=1){
+    counts[d]=(counts[d]||0)+nodes.length;
+    nodes.forEach(n=>n.children&&count(n.children,d+1));
+  })(NAV_TREE.children);
+  const idx={};
+  function place(node,d,parent){
+    let pos=parent;
+    if(d){
+      const angle=((idx[d]||0)/counts[d])*2*Math.PI;
+      idx[d]=(idx[d]||0)+1;
+      const r=80*d;
+      pos={x:center.x+r*Math.cos(angle),y:center.y+r*Math.sin(angle)};
+      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',parent.x);
+      line.setAttribute('y1',parent.y);
+      line.setAttribute('x2',pos.x);
+      line.setAttribute('y2',pos.y);
+      svg.appendChild(line);
+    const link=document.createElementNS('http://www.w3.org/2000/svg','a');
+    link.setAttribute('href',prefix+node.link);
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',pos.x);
+    circle.setAttribute('cy',pos.y);
+    circle.setAttribute('r',d?5:6);
+    const title=document.createElementNS('http://www.w3.org/2000/svg','title');
+    title.textContent=node.name;
+    link.appendChild(circle);
+    link.appendChild(title);
+    svg.appendChild(link);
+    if(node.children) node.children.forEach(n=>place(n,d+1,pos));
+  place(NAV_TREE,0,center);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  initDarkMode();
+  buildBreadcrumb();
+  drawNav();
     const idx=[];
     function place(li,d,parent){
       idx[d]=idx[d]||0;
