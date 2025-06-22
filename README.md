@@ -30,6 +30,7 @@ Timestamps mark each thread's emergence, honoring nonlinear perspectives.
 
 > *Refactor, don’t fossilise.* The loom lives only while threads keep moving.
 
-## 3 · GitHub Pages via Toucan
-Run `python scripts/toucan.py` to weave static pages into `docs/`.
-Enable GitHub Pages from that folder to browse the narrative in a minimalist theme.
+## 3 · GitHub Pages via Loom
+Run `python scripts/loom.py` to weave Markdown into HTML, CSS, and JS under `docs/`.
+GitHub Pages serves those static files directly—no Toucan, just our own code.
+The resulting site uses a minimalist palette and a collapsible index so visitors can wander the branches with ease.
