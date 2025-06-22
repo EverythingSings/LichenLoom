@@ -3,12 +3,14 @@
 <head>
   <meta charset='UTF-8'>
   <title>Micro Story</title>
+  <script>if(localStorage.getItem('dark')!=='false')document.documentElement.classList.add('dark');</script>
   <link rel='stylesheet' href='../../style.css'>
   <script src='../../main.js' defer></script>
 </head>
 <body>
 <button id='dark-toggle'>☾</button>
 <nav id='breadcrumb'></nav>
+<svg id='nav'></svg>
 <div id='nav'><canvas id='mycelial' width='600' height='600'></canvas></div>
 <ul id='story-tree'>
 <li class='branch'>genesis
