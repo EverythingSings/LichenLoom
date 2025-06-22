@@ -10,13 +10,15 @@ function initDarkMode(){
   if(localStorage.getItem('dark')!=='false'){
     document.documentElement.classList.add('dark');
   }
-      const on=document.documentElement.classList.toggle('dark');
-      localStorage.setItem('dark',on);
-}
+  var toggle=document.getElementById('dark-toggle');
+    toggle.addEventListener('click',function(){
+      var on=document.documentElement.classList.toggle('dark');
 function buildBreadcrumb(){
   const bc=document.getElementById('breadcrumb');
   if(!bc) return;
-  const indices=parts.map((p,i)=>p==='index.html'?null:i).filter(i=>i!==null);
+  const indices=parts.map(function(p,i){
+    return p==='index.html'?null:i;
+  }).filter(function(i){ return i!==null; });
   const last=indices[indices.length-1];
   const crumbs=[];
   const home=`${prefix}index.html`;
@@ -38,9 +40,12 @@ function drawNav(){
   svg.setAttribute('viewBox',`0 0 ${size} ${size}`);
   const center={x:size/2,y:size/2};
   const counts=[];
-  (function count(nodes,d=1){
+  (function count(nodes,d){
+    d=d||1;
     counts[d]=(counts[d]||0)+nodes.length;
-    nodes.forEach(n=>n.children&&count(n.children,d+1));
+    nodes.forEach(function(n){
+      if(n.children) count(n.children,d+1);
+    });
   })(NAV_TREE.children);
   const idx={};
   function place(node,d,parent){
@@ -67,11 +72,15 @@ function drawNav(){
     link.appendChild(circle);
     link.appendChild(title);
     svg.appendChild(link);
-    if(node.children) node.children.forEach(n=>place(n,d+1,pos));
+    if(node.children){
+      node.children.forEach(function(n){
+        place(n,d+1,pos);
+      });
+    }
   place(NAV_TREE,0,center);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',function(){
   initDarkMode();
   buildBreadcrumb();
   drawNav();
