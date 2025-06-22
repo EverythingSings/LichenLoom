@@ -16,7 +16,8 @@ TEMPLATE = """<!DOCTYPE html>
 {body}
 </article>
 </body>
-</html>"""
+</html>
+"""
 
 STYLE = """body{font-family:sans-serif;background:#fdfdfd;color:#222;margin:2rem;}article{max-width:60ch;margin:auto;}h1,h2,h3{font-family:serif;color:#00524f;}"""
 
