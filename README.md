@@ -32,5 +32,6 @@ Timestamps mark each thread's emergence, honoring nonlinear perspectives.
 
 ## 3 · GitHub Pages via Loom
 Run `python scripts/loom.py` to weave Markdown into HTML, CSS, and JS under `docs/`.
+Add `--watch` to rebuild whenever a tale shifts.
 GitHub Pages serves those static files directly—no Toucan, just our own code.
 The resulting site uses a minimalist palette and a collapsible index so visitors can wander the branches with ease.
