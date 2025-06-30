@@ -4,7 +4,7 @@ function collectNodes(ul, canvas, parent = null, nodes = []) {
   for (const li of ul.children) {
     const link = li.querySelector('a');
     const node = {
-      label: link ? link.textContent : li.firstChild.textContent.trim(),
+      label: link ? link.textContent.trim() : li.firstChild.textContent.trim(),
       href: link ? link.getAttribute('href') : null,
       parent: parent,
       x: canvas.width / 2 + (Math.random() - 0.5) * 20,
@@ -114,6 +114,22 @@ function attachControls(canvas, offset, scale) {
   });
 }
 
+function darkMode() {
+  const toggle = document.getElementById('dark-toggle');
+  if (!toggle) return;
+  const apply = () => {
+    const on = localStorage.getItem('dark-mode') === 'on';
+    document.body.classList.toggle('dark', on);
+    toggle.textContent = on ? '☀' : '☾';
+  };
+  toggle.addEventListener('click', () => {
+    const val = localStorage.getItem('dark-mode') === 'on' ? 'off' : 'on';
+    localStorage.setItem('dark-mode', val);
+    apply();
+  });
+  apply();
+}
+
 function navigation() {
   const tree = document.getElementById('story-tree');
   const nav = document.getElementById('nav');
@@ -121,9 +137,12 @@ function navigation() {
   if (!tree || !nav || !canvas) return;
 
   const ctx = canvas.getContext('2d');
-  const nodes = collectNodes(tree, canvas);
+  const root = { label: 'root', href: null, parent: null,
+                 x: canvas.width / 2, y: canvas.height / 2, vx: 0, vy: 0 };
+  const nodes = collectNodes(tree, canvas, root, [root]);
   loadPositions(nodes);
   const anchors = setupAnchors(nodes, nav);
+  anchors[0].classList.add('root');
   const links = buildLinks(nodes);
 
   const offset = { x: 0, y: 0 };
@@ -223,4 +242,7 @@ function navigation() {
   animate();
 }
 
-document.addEventListener('DOMContentLoaded', navigation);
+document.addEventListener('DOMContentLoaded', () => {
+  darkMode();
+  navigation();
+});
