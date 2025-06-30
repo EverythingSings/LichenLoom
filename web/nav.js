@@ -1,3 +1,5 @@
+const NODE_RADIUS = 7;
+
 function collectNodes(ul, canvas, parent = null, nodes = []) {
   for (const li of ul.children) {
     const link = li.querySelector('a');
@@ -28,12 +30,13 @@ function setupAnchors(nodes, nav) {
   });
 }
 
-function attachNodeDragging(anchors, nodes, scale) {
+function attachNodeDragging(anchors, nodes, scale, wake) {
   let active = null;
   anchors.forEach((a, i) => {
     a.addEventListener('mousedown', e => {
       if (e.button !== 0) return;
       active = { i, x: e.clientX, y: e.clientY };
+      if (wake) wake();
       e.preventDefault();
       e.stopPropagation();
     });
@@ -99,8 +102,9 @@ function navigation() {
 
   const offset = { x: 0, y: 0 };
   const scale = { value: 1 };
+  let settle = 300;
   attachControls(canvas, offset, scale);
-  attachNodeDragging(anchors, nodes, scale);
+  attachNodeDragging(anchors, nodes, scale, () => { settle = 300; });
 
   const reset = document.getElementById('reset-view');
   if (reset) {
@@ -175,13 +179,16 @@ function navigation() {
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i];
       const a = anchors[i];
-      a.style.left = n.x * scale.value + offset.x - 4 + 'px';
-      a.style.top = n.y * scale.value + offset.y - 4 + 'px';
+      a.style.left = n.x * scale.value + offset.x - NODE_RADIUS + 'px';
+      a.style.top = n.y * scale.value + offset.y - NODE_RADIUS + 'px';
     }
   }
 
   function animate() {
-    tick();
+    if (settle > 0) {
+      tick();
+      settle--;
+    }
     draw();
     requestAnimationFrame(animate);
   }
