@@ -28,6 +28,29 @@ function setupAnchors(nodes, nav) {
   });
 }
 
+function attachNodeDragging(anchors, nodes, scale) {
+  let active = null;
+  anchors.forEach((a, i) => {
+    a.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      active = { i, x: e.clientX, y: e.clientY };
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+  window.addEventListener('mousemove', e => {
+    if (!active) return;
+    const n = nodes[active.i];
+    n.x += (e.clientX - active.x) / scale.value;
+    n.y += (e.clientY - active.y) / scale.value;
+    active.x = e.clientX;
+    active.y = e.clientY;
+  });
+  window.addEventListener('mouseup', () => {
+    active = null;
+  });
+}
+
 function buildLinks(nodes) {
   return nodes
     .filter(n => n.parent)
@@ -77,6 +100,16 @@ function navigation() {
   const offset = { x: 0, y: 0 };
   const scale = { value: 1 };
   attachControls(canvas, offset, scale);
+  attachNodeDragging(anchors, nodes, scale);
+
+  const reset = document.getElementById('reset-view');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      offset.x = 0;
+      offset.y = 0;
+      scale.value = 1;
+    });
+  }
 
   const k = 0.01;
   const rep = 2000;
