@@ -120,4 +120,26 @@ def build():
     )
 
 if __name__ == "__main__":
+    import argparse
+    import time
+
+    parser = argparse.ArgumentParser(description="Weave markdown into static pages")
+    parser.add_argument("--watch", action="store_true", help="rebuild on change")
+    args = parser.parse_args()
+
+    def snapshot():
+        return {p: p.stat().st_mtime for p in gather_markdown_files()}
+
     build()
+
+    if args.watch:
+        last = snapshot()
+        try:
+            while True:
+                time.sleep(1)
+                current = snapshot()
+                if current != last:
+                    build()
+                    last = current
+        except KeyboardInterrupt:
+            pass
