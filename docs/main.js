@@ -30,6 +30,28 @@ function setupAnchors(nodes, nav) {
   });
 }
 
+function loadPositions(nodes) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('nav-pos') || '{}');
+    nodes.forEach(n => {
+      const key = n.href || n.label;
+      if (saved[key]) {
+        n.x = saved[key].x;
+        n.y = saved[key].y;
+      }
+    });
+  } catch (_) {}
+}
+
+function savePositions(nodes) {
+  const map = {};
+  nodes.forEach(n => {
+    const key = n.href || n.label;
+    map[key] = { x: n.x, y: n.y };
+  });
+  try { localStorage.setItem('nav-pos', JSON.stringify(map)); } catch (_) {}
+}
+
 function attachNodeDragging(anchors, nodes, scale, wake) {
   let active = null;
   anchors.forEach((a, i) => {
@@ -50,6 +72,9 @@ function attachNodeDragging(anchors, nodes, scale, wake) {
     active.y = e.clientY;
   });
   window.addEventListener('mouseup', () => {
+    if (active) {
+      savePositions(nodes);
+    }
     active = null;
   });
 }
@@ -97,6 +122,7 @@ function navigation() {
 
   const ctx = canvas.getContext('2d');
   const nodes = collectNodes(tree, canvas);
+  loadPositions(nodes);
   const anchors = setupAnchors(nodes, nav);
   const links = buildLinks(nodes);
 
