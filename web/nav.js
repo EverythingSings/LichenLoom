@@ -20,6 +20,22 @@ function createSpores(canvas) {
 }
 
 function updateSpores(spores, nodes, canvas) {
+  // Age and fade sporulation-event spores
+  for (let i = spores.length - 1; i >= 0; i--) {
+    const spore = spores[i];
+    if (spore.birth !== undefined) {
+      spore.birth++;
+      // Fade out gradually
+      if (spore.birth > 180) {
+        spore.opacity *= 0.95;
+        if (spore.opacity < 0.05) {
+          spores.splice(i, 1);
+          continue;
+        }
+      }
+    }
+  }
+
   spores.forEach(spore => {
     // Check if attached to a node
     if (spore.attached) {
@@ -104,12 +120,19 @@ function collectNodes(ul, canvas, parent = null, nodes = []) {
   return nodes;
 }
 
-function setupAnchors(nodes, nav) {
-  return nodes.map(n => {
+function setupAnchors(nodes, nav, onSporulate) {
+  return nodes.map((n, i) => {
     const a = document.createElement('a');
     a.className = 'node';
     if (n.href) a.href = n.href;
     a.dataset.label = n.label;
+    // Ctrl/Cmd + Click to sporulate (release spores)
+    a.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        if (onSporulate) onSporulate(n);
+      }
+    });
     nav.appendChild(a);
     return a;
   });
@@ -208,13 +231,39 @@ function navigation() {
   const ctx = canvas.getContext('2d');
   const nodes = collectNodes(tree, canvas);
   loadPositions(nodes);
-  const anchors = setupAnchors(nodes, nav);
+
+  const spores = createSpores(canvas);
+
+  // Sporulation event: burst of spores from a node
+  function sporulate(node) {
+    for (let i = 0; i < 8; i++) {
+      const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.3;
+      const speed = 1 + Math.random() * 2;
+      spores.push({
+        x: node.x,
+        y: node.y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        radius: Math.random() * 3 + 1,
+        opacity: 0.6,
+        phase: Math.random() * Math.PI * 2,
+        attached: null,
+        attachTime: 0,
+        birth: 0 // Track age
+      });
+    }
+    // Limit total spores
+    while (spores.length > 100) {
+      spores.shift();
+    }
+  }
+
+  const anchors = setupAnchors(nodes, nav, sporulate);
   const links = buildLinks(nodes);
 
   const offset = { x: 0, y: 0 };
   const scale = { value: 1 };
   let settle = 300;
-  const spores = createSpores(canvas);
   attachControls(canvas, offset, scale);
   attachNodeDragging(anchors, nodes, scale, () => { settle = 300; });
 
