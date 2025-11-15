@@ -276,6 +276,15 @@ function navigation() {
     });
   }
 
+  // Easter egg: Press 'S' for mass sporulation event
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 's' || e.key === 'S') {
+      if (!e.ctrlKey && !e.metaKey && !e.target.matches('input,textarea')) {
+        nodes.forEach(n => sporulate(n));
+      }
+    }
+  });
+
   const k = 0.01;
   const rep = 2000;
   const damp = 0.6;
