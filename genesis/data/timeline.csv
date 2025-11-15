@@ -1,0 +1,50 @@
+timestamp,character,emotion,action,consequence
+2024-01-01T00:00:00Z,Hero,hopeful,wakes up,begins journey
+2024-01-01T06:00:00Z,Hero,determined,leaves home,can't go back
+2024-01-01T12:00:00Z,Mentor,wise,appears,shares cryptic advice
+2024-01-01T12:30:00Z,Hero,confused,asks for clarity,mentor laughs
+2024-01-01T18:00:00Z,Hero,hungry,enters tavern,meets companion
+2024-01-01T18:15:00Z,Companion,suspicious,questions hero,trust begins
+2024-01-02T00:00:00Z,Both,tired,make camp,share stories
+2024-01-02T03:00:00Z,Villain,plotting,watches from distance,plans attack
+2024-01-02T09:00:00Z,Hero,refreshed,continues journey,walks into trap
+2024-01-02T09:30:00Z,Villain,triumphant,springs trap,captures both
+2024-01-02T10:00:00Z,Companion,terrified,panics,reveals secret
+2024-01-02T10:05:00Z,Hero,betrayed,learns truth,trust breaks
+2024-01-02T10:10:00Z,Villain,gloating,monologues,wastes time
+2024-01-02T10:20:00Z,Hero,angry,breaks free,fights back
+2024-01-02T10:25:00Z,Companion,guilty,helps hero,redemption begins
+2024-01-02T10:30:00Z,Mentor,sacrificial,arrives,takes mortal wound
+2024-01-02T10:35:00Z,Hero,devastated,cradles mentor,learns final lesson
+2024-01-02T10:40:00Z,Mentor,dying,whispers secret,passes torch
+2024-01-02T10:45:00Z,Hero,transformed,unlocks power,defeats villain
+2024-01-02T11:00:00Z,Villain,defeated,falls,monologue interrupted
+2024-01-02T11:30:00Z,Hero,victorious,stands alone,pays the cost
+2024-01-02T12:00:00Z,Companion,sorry,asks forgiveness,offered hand
+2024-01-02T12:05:00Z,Hero,merciful,forgives companion,chooses trust
+2024-01-02T18:00:00Z,Both,healing,bury mentor,honor sacrifice
+2024-01-03T00:00:00Z,Hero,changed,looks at horizon,sees tomorrow
+2024-01-03T00:01:00Z,Narrator,omniscient,closes book,THE END
+
+# A Hero's Journey in CSV
+# (Structured data, unstructured feelings)
+#
+# Each row is a moment
+# Each column is a dimension
+# Together: a story
+#
+# You could:
+# - Import this into a spreadsheet
+# - Plot emotions over time
+# - Visualize the timeline
+# - Query who was where when
+# - Filter by character
+# - Sort by emotion
+#
+# Or you could just read it
+# Row by row
+# Comma by comma
+# And feel the narrative unfold
+#
+# Even data can tell stories
+# Even CSV can break your heart
