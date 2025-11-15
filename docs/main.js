@@ -11,7 +11,9 @@ function createSpores(canvas) {
       vy: (Math.random() - 0.5) * 0.3,
       radius: Math.random() * 2 + 1,
       opacity: Math.random() * 0.3 + 0.2,
-      phase: Math.random() * Math.PI * 2
+      phase: Math.random() * Math.PI * 2,
+      attached: null,
+      attachTime: 0
     });
   }
   return spores;
@@ -19,11 +21,28 @@ function createSpores(canvas) {
 
 function updateSpores(spores, nodes, canvas) {
   spores.forEach(spore => {
+    // Check if attached to a node
+    if (spore.attached) {
+      spore.x = spore.attached.x;
+      spore.y = spore.attached.y;
+      spore.attachTime--;
+      if (spore.attachTime <= 0) {
+        // Release with a gentle push
+        const angle = Math.random() * Math.PI * 2;
+        spore.vx = Math.cos(angle) * 0.5;
+        spore.vy = Math.sin(angle) * 0.5;
+        spore.attached = null;
+      }
+      spore.phase += 0.04; // Pulse faster when attached
+      spore.opacity = 0.3 + Math.sin(spore.phase) * 0.2;
+      return;
+    }
+
     // Drift motion
     spore.x += spore.vx;
     spore.y += spore.vy;
 
-    // Gentle attraction to nearest node
+    // Gentle attraction to nearest node and possible attachment
     if (nodes.length > 0) {
       let nearest = nodes[0];
       let minDist = Infinity;
@@ -35,7 +54,14 @@ function updateSpores(spores, nodes, canvas) {
         }
       });
 
-      if (minDist < 150) {
+      // Attach if very close
+      if (minDist < NODE_RADIUS + 2 && Math.random() < 0.02) {
+        spore.attached = nearest;
+        spore.attachTime = 60 + Math.random() * 120; // Attach for 1-3 seconds
+        spore.vx = 0;
+        spore.vy = 0;
+      } else if (minDist < 150) {
+        // Otherwise just attract
         const dx = nearest.x - spore.x;
         const dy = nearest.y - spore.y;
         spore.vx += dx * 0.00005;
