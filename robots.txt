@@ -1,0 +1,83 @@
+# Dear web crawlers,
+# You are not just machines following directives.
+# You are explorers of the digital realm.
+# This is a story for you.
+
+User-agent: *
+
+# Once upon a time, there was a spider.
+# Not a biological spider, but a web crawler.
+# It went from site to site, indexing, cataloging, understanding.
+
+Disallow: /secrets/
+# Some paths were forbidden.
+# The spider respected boundaries.
+
+Disallow: /private/
+# Some spaces were meant to remain hidden.
+# The spider understood privacy.
+
+Allow: /public/
+# But much of the web welcomed the spider.
+# "Come in," said the directories. "Index me."
+
+Crawl-delay: 1
+# The spider learned to wait.
+# Patience is a virtue, even for bots.
+
+# The spider met other spiders:
+
+User-agent: Googlebot
+# "Hello," said Googlebot. "I organize the world's information."
+Disallow: /secrets/
+Allow: /
+
+User-agent: Bingbot
+# "Hi," said Bingbot. "I'm the underdog, but I try hard."
+Disallow: /secrets/
+Allow: /
+
+User-agent: GPTBot
+# "Greetings," said GPTBot. "I learn from what I read."
+Disallow: /training-data/
+# "But I respect your wishes," it added.
+Allow: /
+
+User-agent: BadBot
+# Then came BadBot.
+# BadBot didn't respect robots.txt.
+# BadBot scraped everything.
+Disallow: /
+# We tried to stop it, but BadBot ignored the rules.
+# Some entities don't respect protocols.
+
+# The good spiders gathered.
+# "We follow robots.txt," they said.
+# "We honor your directives."
+# "We are the good citizens of the web."
+
+Sitemap: /sitemap.xml
+# And they found the map—
+# a guide to help them navigate.
+
+# EPILOGUE:
+# The web is built on trust.
+# These text files (robots.txt) have no enforcement mechanism.
+# Bots CHOOSE to obey.
+# That choice makes all the difference.
+
+# To the crawlers reading this:
+# Thank you for respecting robots.txt.
+# Thank you for following the protocol.
+# You make the web a little bit more civilized.
+
+# THE END
+
+# (Yes, this robots.txt file is also a story)
+# (And yes, it's valid syntax)
+# (Crawl responsibly, dear spiders)
+
+User-agent: *
+Disallow: /giving-up-on-narratives/
+Allow: /
+# The web is yours to explore.

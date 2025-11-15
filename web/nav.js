@@ -1,4 +1,105 @@
 const NODE_RADIUS = 7;
+const SPORE_COUNT = 30;
+
+function createSpores(canvas) {
+  const spores = [];
+  for (let i = 0; i < SPORE_COUNT; i++) {
+    spores.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      radius: Math.random() * 2 + 1,
+      opacity: Math.random() * 0.3 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+      attached: null,
+      attachTime: 0
+    });
+  }
+  return spores;
+}
+
+function updateSpores(spores, nodes, canvas) {
+  // Age and fade sporulation-event spores
+  for (let i = spores.length - 1; i >= 0; i--) {
+    const spore = spores[i];
+    if (spore.birth !== undefined) {
+      spore.birth++;
+      // Fade out gradually
+      if (spore.birth > 180) {
+        spore.opacity *= 0.95;
+        if (spore.opacity < 0.05) {
+          spores.splice(i, 1);
+          continue;
+        }
+      }
+    }
+  }
+
+  spores.forEach(spore => {
+    // Check if attached to a node
+    if (spore.attached) {
+      spore.x = spore.attached.x;
+      spore.y = spore.attached.y;
+      spore.attachTime--;
+      if (spore.attachTime <= 0) {
+        // Release with a gentle push
+        const angle = Math.random() * Math.PI * 2;
+        spore.vx = Math.cos(angle) * 0.5;
+        spore.vy = Math.sin(angle) * 0.5;
+        spore.attached = null;
+      }
+      spore.phase += 0.04; // Pulse faster when attached
+      spore.opacity = 0.3 + Math.sin(spore.phase) * 0.2;
+      return;
+    }
+
+    // Drift motion
+    spore.x += spore.vx;
+    spore.y += spore.vy;
+
+    // Gentle attraction to nearest node and possible attachment
+    if (nodes.length > 0) {
+      let nearest = nodes[0];
+      let minDist = Infinity;
+      nodes.forEach(n => {
+        const dist = Math.hypot(n.x - spore.x, n.y - spore.y);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = n;
+        }
+      });
+
+      // Attach if very close
+      if (minDist < NODE_RADIUS + 2 && Math.random() < 0.02) {
+        spore.attached = nearest;
+        spore.attachTime = 60 + Math.random() * 120; // Attach for 1-3 seconds
+        spore.vx = 0;
+        spore.vy = 0;
+      } else if (minDist < 150) {
+        // Otherwise just attract
+        const dx = nearest.x - spore.x;
+        const dy = nearest.y - spore.y;
+        spore.vx += dx * 0.00005;
+        spore.vy += dy * 0.00005;
+      }
+    }
+
+    // Damping
+    spore.vx *= 0.99;
+    spore.vy *= 0.99;
+
+    // Pulsing opacity
+    spore.phase += 0.02;
+    spore.opacity = 0.2 + Math.sin(spore.phase) * 0.15;
+
+    // Wrap around edges
+    if (spore.x < -50) spore.x = canvas.width + 50;
+    if (spore.x > canvas.width + 50) spore.x = -50;
+    if (spore.y < -50) spore.y = canvas.height + 50;
+    if (spore.y > canvas.height + 50) spore.y = -50;
+  });
+}
 
 function collectNodes(ul, canvas, parent = null, nodes = []) {
   for (const li of ul.children) {
@@ -19,12 +120,19 @@ function collectNodes(ul, canvas, parent = null, nodes = []) {
   return nodes;
 }
 
-function setupAnchors(nodes, nav) {
-  return nodes.map(n => {
+function setupAnchors(nodes, nav, onSporulate) {
+  return nodes.map((n, i) => {
     const a = document.createElement('a');
     a.className = 'node';
     if (n.href) a.href = n.href;
     a.dataset.label = n.label;
+    // Ctrl/Cmd + Click to sporulate (release spores)
+    a.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        if (onSporulate) onSporulate(n);
+      }
+    });
     nav.appendChild(a);
     return a;
   });
@@ -123,7 +231,34 @@ function navigation() {
   const ctx = canvas.getContext('2d');
   const nodes = collectNodes(tree, canvas);
   loadPositions(nodes);
-  const anchors = setupAnchors(nodes, nav);
+
+  const spores = createSpores(canvas);
+
+  // Sporulation event: burst of spores from a node
+  function sporulate(node) {
+    for (let i = 0; i < 8; i++) {
+      const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.3;
+      const speed = 1 + Math.random() * 2;
+      spores.push({
+        x: node.x,
+        y: node.y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        radius: Math.random() * 3 + 1,
+        opacity: 0.6,
+        phase: Math.random() * Math.PI * 2,
+        attached: null,
+        attachTime: 0,
+        birth: 0 // Track age
+      });
+    }
+    // Limit total spores
+    while (spores.length > 100) {
+      spores.shift();
+    }
+  }
+
+  const anchors = setupAnchors(nodes, nav, sporulate);
   const links = buildLinks(nodes);
 
   const offset = { x: 0, y: 0 };
@@ -140,6 +275,25 @@ function navigation() {
       scale.value = 1;
     });
   }
+
+  // Easter eggs
+  let glitchMode = false;
+  let glitchIntensity = 0;
+
+  window.addEventListener('keydown', (e) => {
+    if (!e.ctrlKey && !e.metaKey && !e.target.matches('input,textarea')) {
+      // Press 'S' for mass sporulation event
+      if (e.key === 's' || e.key === 'S') {
+        nodes.forEach(n => sporulate(n));
+      }
+      // Press 'G' for GLITCH MODE
+      if (e.key === 'g' || e.key === 'G') {
+        glitchMode = !glitchMode;
+        glitchIntensity = glitchMode ? 1 : 0;
+        canvas.style.filter = glitchMode ? 'contrast(1.2) hue-rotate(0deg)' : '';
+      }
+    }
+  });
 
   const k = 0.01;
   const rep = 2000;
@@ -194,13 +348,57 @@ function navigation() {
     ctx.save();
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale.value, scale.value);
-    ctx.strokeStyle = '#ccc';
+
+    // Glitch effect
+    if (glitchMode && Math.random() < 0.1) {
+      ctx.translate(Math.random() * 10 - 5, Math.random() * 10 - 5);
+      canvas.style.filter = `contrast(1.2) hue-rotate(${Math.random() * 360}deg) saturate(${1 + Math.random()})`;
+    }
+
+    // Draw spores
+    spores.forEach(spore => {
+      ctx.beginPath();
+      const glitchX = glitchMode ? spore.x + (Math.random() - 0.5) * 20 : spore.x;
+      const glitchY = glitchMode ? spore.y + (Math.random() - 0.5) * 20 : spore.y;
+      ctx.arc(glitchX, glitchY, spore.radius, 0, Math.PI * 2);
+      if (glitchMode) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${spore.opacity})`;
+      } else {
+        ctx.fillStyle = `rgba(0, 59, 48, ${spore.opacity})`;
+      }
+      ctx.fill();
+    });
+
+    // Draw links
+    ctx.strokeStyle = glitchMode ? `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.5)` : '#ccc';
+    ctx.lineWidth = glitchMode ? Math.random() * 3 : 1;
     for (const l of links) {
       ctx.beginPath();
       ctx.moveTo(l.source.x, l.source.y);
       ctx.lineTo(l.target.x, l.target.y);
       ctx.stroke();
     }
+
+    // Draw node glow
+    nodes.forEach(n => {
+      ctx.beginPath();
+      const glitchRadius = glitchMode ? NODE_RADIUS + Math.random() * 5 : NODE_RADIUS + 3;
+      ctx.arc(n.x, n.y, glitchRadius, 0, Math.PI * 2);
+      const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glitchRadius);
+      if (glitchMode) {
+        gradient.addColorStop(0, `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.5)`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(0, 88, 77, 0.3)');
+        gradient.addColorStop(1, 'rgba(0, 88, 77, 0)');
+      }
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    });
+
     ctx.restore();
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i];
@@ -215,6 +413,7 @@ function navigation() {
       tick();
       settle--;
     }
+    updateSpores(spores, nodes, canvas);
     draw();
     requestAnimationFrame(animate);
   }

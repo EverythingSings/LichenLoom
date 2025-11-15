@@ -1,0 +1,138 @@
+version: '3.8'
+
+# A Story Told in Docker Compose
+# (Infrastructure as Narrative)
+
+services:
+
+  protagonist:
+    image: human:latest
+    container_name: "the-hero"
+    environment:
+      - MOTIVATION=save_the_world
+      - HOPE_LEVEL=high
+      - TRAUMA=childhood_abandonment
+    volumes:
+      - emotional_baggage:/trauma
+      - memories:/past
+    networks:
+      - society
+    depends_on:
+      - mentor
+    restart: always  # They never give up
+
+  mentor:
+    image: wise_elder:legacy
+    container_name: "the-guide"
+    environment:
+      - WISDOM=ancient
+      - SECRETS=many
+      - HEALTH=declining
+    networks:
+      - society
+    healthcheck:
+      test: ["CMD", "check_vitals.sh"]
+      interval: 1h
+      timeout: 10s
+      retries: 3
+      # The mentor is dying. This is foreshadowing.
+
+  love_interest:
+    image: human:latest
+    container_name: "the-partner"
+    environment:
+      - CHEMISTRY=high
+      - TRUST_ISSUES=true
+      - SECRET=working_for_villain
+    networks:
+      - society
+      - shadow_network  # Uh oh
+    labels:
+      plot.twist: "true"
+
+  villain:
+    image: evil:unstoppable
+    container_name: "the-nemesis"
+    environment:
+      - POWER_LEVEL=over_9000
+      - MOTIVATION=revenge
+      - WEAKNESS=pride
+    ports:
+      - "666:666"  # Exposed! This is how we'll attack
+    networks:
+      - shadow_network
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'    # Very powerful
+          memory: 8G
+    cap_add:
+      - ALL  # All capabilities (dangerous!)
+
+  plot_twist:
+    image: revelation:shocking
+    container_name: "the-truth"
+    environment:
+      - REVEAL=mentor_and_villain_are_brothers
+    networks:
+      - society
+    depends_on:
+      - mentor
+      - villain
+    profiles:
+      - act_three  # Only runs in act 3
+
+  final_battle:
+    image: confrontation:epic
+    container_name: "climax"
+    environment:
+      - STAKES=maximum
+      - CASUALTIES=mentor
+    depends_on:
+      - protagonist
+      - villain
+      - plot_twist
+    networks:
+      - society
+      - shadow_network
+    restart: "no"  # This only happens once
+    profiles:
+      - act_three
+
+volumes:
+  emotional_baggage:
+    driver: local
+    # Heavy stuff that gets carried throughout
+
+  memories:
+    driver: local
+    # The past shapes the present
+
+networks:
+  society:
+    driver: bridge
+    # The normal world
+
+  shadow_network:
+    driver: overlay
+    internal: true  # Hidden from society
+    # Where villains plot
+
+# USAGE:
+# docker-compose up -d               # Start the story
+# docker-compose logs protagonist    # Follow the hero's journey
+# docker-compose --profile act_three up  # The climax
+# docker-compose down                # The end
+# docker-compose down -v             # Forget everything
+
+# The story is told through:
+# - Service dependencies (relationships)
+# - Environment variables (character traits)
+# - Networks (social structures)
+# - Health checks (mortality)
+# - Resource limits (power levels)
+# - Restart policies (persistence)
+# - Volumes (emotional weight)
+
+# Even infrastructure can tell stories.
+# Even containers have character arcs.

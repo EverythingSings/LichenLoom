@@ -108,6 +108,7 @@ def build():
 
     index_body = [
         "<h1>LichenLoom</h1>",
+        "<p style='text-align:center;font-size:0.85rem;color:#666;'>Drag nodes • Pan canvas • Ctrl+Click to sporulate • Press 'S' for bloom • Press 'G' for glitch</p>",
         "<div id='nav'><canvas id='mycelial' width='600' height='600'></canvas><button id='reset-view'>center</button></div>"
     ] + tree_to_lines(tree)
     (OUTPUT_DIR / "index.html").write_text(

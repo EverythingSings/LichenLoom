@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""
+This file is valid in multiple languages simultaneously.
+A polyglot narrative.
+"""
+
+print("Hello from Python!")
+
+"""
+/*
+And also valid JavaScript!
+*/
+
+console.log("Hello from JavaScript!");
+
+/*
+# And also valid Markdown!
+
+## The Tale of the Polyglot
+
+I am a file that exists in multiple realities at once.
+
+- As **Python**, I execute and print
+- As **JavaScript**, I log to console
+- As **Markdown**, I render beautifully
+- As **plain text**, I'm just characters
+
+Who am I, really?
+
+All of the above. None of the above.
+I am Schrödinger's source code.
+
+## The Metaphor
+
+Aren't we all polyglots?
+
+Different versions of ourselves in different contexts:
+- At work (professional)
+- With family (familial)
+- With friends (casual)
+- Alone (authentic?)
+
+Same bytes, different interpreters.
+Same person, different contexts.
+
+Valid everywhere, understood differently.
+
+## THE END
+
+(Or run me to see which language gets the final word)
+
+*/
+
+console.log("JavaScript has spoken!");
+
+// But wait, there's more...
+"""
+
+print("Python gets the last word!")
+print("(Or does it?)")
+
+# To run:
+# python3 polyglot.txt    -> Python wins
+# node polyglot.txt       -> JavaScript wins
+# cat polyglot.txt        -> You see everything
+# markdown viewer         -> Pretty formatting
+
+# The moral: Context is everything.
+# The same text means different things to different readers.
+# That's not a bug. That's literature.
