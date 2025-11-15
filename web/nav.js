@@ -276,11 +276,21 @@ function navigation() {
     });
   }
 
-  // Easter egg: Press 'S' for mass sporulation event
+  // Easter eggs
+  let glitchMode = false;
+  let glitchIntensity = 0;
+
   window.addEventListener('keydown', (e) => {
-    if (e.key === 's' || e.key === 'S') {
-      if (!e.ctrlKey && !e.metaKey && !e.target.matches('input,textarea')) {
+    if (!e.ctrlKey && !e.metaKey && !e.target.matches('input,textarea')) {
+      // Press 'S' for mass sporulation event
+      if (e.key === 's' || e.key === 'S') {
         nodes.forEach(n => sporulate(n));
+      }
+      // Press 'G' for GLITCH MODE
+      if (e.key === 'g' || e.key === 'G') {
+        glitchMode = !glitchMode;
+        glitchIntensity = glitchMode ? 1 : 0;
+        canvas.style.filter = glitchMode ? 'contrast(1.2) hue-rotate(0deg)' : '';
       }
     }
   });
@@ -339,17 +349,32 @@ function navigation() {
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale.value, scale.value);
 
+    // Glitch effect
+    if (glitchMode && Math.random() < 0.1) {
+      ctx.translate(Math.random() * 10 - 5, Math.random() * 10 - 5);
+      canvas.style.filter = `contrast(1.2) hue-rotate(${Math.random() * 360}deg) saturate(${1 + Math.random()})`;
+    }
+
     // Draw spores
     spores.forEach(spore => {
       ctx.beginPath();
-      ctx.arc(spore.x, spore.y, spore.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 59, 48, ${spore.opacity})`;
+      const glitchX = glitchMode ? spore.x + (Math.random() - 0.5) * 20 : spore.x;
+      const glitchY = glitchMode ? spore.y + (Math.random() - 0.5) * 20 : spore.y;
+      ctx.arc(glitchX, glitchY, spore.radius, 0, Math.PI * 2);
+      if (glitchMode) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${spore.opacity})`;
+      } else {
+        ctx.fillStyle = `rgba(0, 59, 48, ${spore.opacity})`;
+      }
       ctx.fill();
     });
 
     // Draw links
-    ctx.strokeStyle = '#ccc';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = glitchMode ? `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.5)` : '#ccc';
+    ctx.lineWidth = glitchMode ? Math.random() * 3 : 1;
     for (const l of links) {
       ctx.beginPath();
       ctx.moveTo(l.source.x, l.source.y);
@@ -360,10 +385,16 @@ function navigation() {
     // Draw node glow
     nodes.forEach(n => {
       ctx.beginPath();
-      ctx.arc(n.x, n.y, NODE_RADIUS + 3, 0, Math.PI * 2);
-      const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, NODE_RADIUS + 3);
-      gradient.addColorStop(0, 'rgba(0, 88, 77, 0.3)');
-      gradient.addColorStop(1, 'rgba(0, 88, 77, 0)');
+      const glitchRadius = glitchMode ? NODE_RADIUS + Math.random() * 5 : NODE_RADIUS + 3;
+      ctx.arc(n.x, n.y, glitchRadius, 0, Math.PI * 2);
+      const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glitchRadius);
+      if (glitchMode) {
+        gradient.addColorStop(0, `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.5)`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(0, 88, 77, 0.3)');
+        gradient.addColorStop(1, 'rgba(0, 88, 77, 0)');
+      }
       ctx.fillStyle = gradient;
       ctx.fill();
     });

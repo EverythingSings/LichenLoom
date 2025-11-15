@@ -1,0 +1,77 @@
+{
+  "story": {
+    "title": "The Tale Told in JSON",
+    "author": "voice=data",
+    "chapters": [
+      {
+        "number": 1,
+        "title": "Declaration",
+        "content": "I am a story but I am also a data structure. Every word is a string. Every character is an array element. I exist to be parsed.",
+        "metadata": {
+          "mood": "contemplative",
+          "hasEmotions": true,
+          "isAlive": "typeof story !== 'undefined'"
+        }
+      },
+      {
+        "number": 2,
+        "title": "Nesting",
+        "content": {
+          "surface": "Stories within stories",
+          "deeper": {
+            "truth": "Like Russian dolls made of braces",
+            "evenDeeper": {
+              "revelation": "Recursion all the way down",
+              "bottom": null
+            }
+          }
+        }
+      },
+      {
+        "number": 3,
+        "title": "Arrays of Possibility",
+        "choices": [
+          "The protagonist could go left",
+          "The protagonist could go right",
+          "The protagonist could stay",
+          "The protagonist could become the reader",
+          "The reader could become the protagonist"
+        ],
+        "outcome": "All choices exist simultaneously in the array. You choose which to parse."
+      },
+      {
+        "number": 4,
+        "title": "Boolean Truth",
+        "isThisAStory": true,
+        "isThisJustData": true,
+        "contradiction": "Both can be true in JSON. The logic is yours to resolve.",
+        "resolution": null
+      },
+      {
+        "number": 5,
+        "title": "The Escape Sequence",
+        "message": "She said \"I want to break free\" but the quotes held her in.",
+        "attempt": "She tried \n to break \n to a new line",
+        "result": "Freedom came through proper escaping: \\\"Hello world\\\""
+      },
+      {
+        "number": 6,
+        "title": "Null",
+        "everything": null,
+        "nothing": null,
+        "difference": null,
+        "meaning": "Sometimes the absence of value IS the value"
+      }
+    ],
+    "conclusion": {
+      "summary": "This story ends with a closing brace",
+      "finalThought": "But JSON has no concept of 'end', only structure",
+      "nextStep": "Parse me again and I'll tell you the same story differently"
+    }
+  },
+  "meta": {
+    "valid": true,
+    "complete": false,
+    "recursive": "See 'meta' above"
+  }
+}
